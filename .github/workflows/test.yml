@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_call: {}
 
 jobs:
   unit:
@@ -20,9 +21,10 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.gitlibs
+            ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-      - uses: DeLaGuardo/setup-clojure@12
+      - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
       - run: clojure -M:test unit
@@ -45,9 +47,10 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.gitlibs
+            ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-      - uses: DeLaGuardo/setup-clojure@12
+      - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
       - run: clojure -M:test integration
@@ -70,9 +73,10 @@ jobs:
           path: |
             ~/.m2/repository
             ~/.gitlibs
+            ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-      - uses: DeLaGuardo/setup-clojure@12
+      - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
       - run: clojure -M:test e2e
