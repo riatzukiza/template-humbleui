@@ -15,5 +15,5 @@
 (deftest select-rename-test
   (testing "selects and renames keys"
     (is (= {:x 1} (sut/select-rename {:a 1 :b 2} {:a :x}))))
-  (testing "missing source key produces empty map"
+  (testing "missing source key yields empty map"
     (is (= {} (sut/select-rename {} {:a :x})))))

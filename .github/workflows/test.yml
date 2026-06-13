@@ -12,12 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -26,14 +24,10 @@ jobs:
             ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-
       - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
-
-      - name: Unit tests
-        run: clojure -M:test unit
-
+      - run: clojure -M:test unit
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -44,12 +38,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -58,14 +50,10 @@ jobs:
             ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-
       - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
-
-      - name: Integration tests
-        run: clojure -M:test integration
-
+      - run: clojure -M:test integration
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -76,12 +64,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -90,14 +76,10 @@ jobs:
             ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-
       - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
-
-      - name: E2E tests
-        run: clojure -M:test e2e
-
+      - run: clojure -M:test e2e
       - if: always()
         uses: actions/upload-artifact@v4
         with:

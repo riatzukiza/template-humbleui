@@ -1,8 +1,5 @@
 name: CI
 
-# Orchestrator: lint gates all; tests run in parallel after lint;
-# build runs after all tests pass.
-
 on:
   push:
     branches: [main]
@@ -15,12 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -29,11 +24,9 @@ jobs:
             ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-
       - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
-
       - run: clojure -M:kondo
 
   test-unit:
@@ -42,12 +35,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -56,13 +47,10 @@ jobs:
             ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-
       - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
-
       - run: clojure -M:test unit
-
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -75,12 +63,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -89,13 +75,10 @@ jobs:
             ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-
       - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
-
       - run: clojure -M:test integration
-
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -108,12 +91,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -122,13 +103,10 @@ jobs:
             ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-
       - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
-
       - run: clojure -M:test e2e
-
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -143,12 +121,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -157,18 +133,14 @@ jobs:
             ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
-
       - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
-
       - run: clojure -T:build uberjar
-
       - uses: actions/upload-artifact@v4
         with:
           name: uberjar
           path: target/*-standalone.jar
-
       - if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:

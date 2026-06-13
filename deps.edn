@@ -1,26 +1,29 @@
-{:paths ["src" "resources"]
+{:paths ["src/core" "resources"]
 
  :deps
  {org.clojure/clojure {:mvn/version "1.12.0"}
-  ;; HumbleUI is git-based; pin a known-good SHA from the main branch.
-  ;; Update sha when pulling in upstream changes.
-  ;; See: https://github.com/HumbleUI/HumbleUI
-  io.github.HumbleUI/HumbleUI {:git/url "https://github.com/HumbleUI/HumbleUI.git"
-                                :git/sha "b9c7b6e5ed05fd86cbf1e4c4e764b0437e6f41e1"}
-  metosin/malli {:mvn/version "0.16.4"}}
+  metosin/malli       {:mvn/version "0.16.4"}}
 
  :aliases
- {:test
-  {:extra-paths ["test"]
-   :extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}
-                lambdaisland/kaocha-junit-xml {:mvn/version "0.0.76"}
-                nubank/matcher-combinators {:mvn/version "3.9.1"}}
-   :main-opts ["-m" "kaocha.runner"]}
+ {;; HumbleUI rendering layer — used only by -main and uberjar build.
+  ;; Never pulled in by :test or :kondo.
+  :humbleui
+  {:extra-paths ["src/humbleui"]
+   :extra-deps  {io.github.HumbleUI/HumbleUI
+                 {:git/url "https://github.com/HumbleUI/HumbleUI.git"
+                  :git/sha "ca23454728b347152f019f7bacbb2538cecbfa93"}}}
 
-  :build
-  {:deps {io.github.clojure/tools.build {:git/tag "v0.10.5" :git/sha "2a21b7a"}}
-   :ns-default build}
+  :test
+  {:extra-paths ["test"]
+   :extra-deps  {lambdaisland/kaocha          {:mvn/version "1.91.1392"}
+                 lambdaisland/kaocha-junit-xml {:mvn/version "0.0.76"}
+                 nubank/matcher-combinators    {:mvn/version "3.9.1"}}
+   :main-opts   ["-m" "kaocha.runner"]}
 
   :kondo
   {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2024.11.14"}}
-   :main-opts ["-m" "clj-kondo.main" "--lint" "src" "test"]}}}
+   :main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]}
+
+  :build
+  {:deps       {io.github.clojure/tools.build {:git/tag "v0.10.5" :git/sha "2a21b7a"}}
+   :ns-default build}}}
