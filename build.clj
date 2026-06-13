@@ -1,5 +1,8 @@
 (ns build
-  "tools.build uberjar — includes :humbleui alias so infra.window compiles."
+  "tools.build uberjar.
+   infra.window is included in the jar via copy-dir but NOT AOT-compiled.
+   HumbleUI loads its natives at runtime; compiling them requires a GPU/EGL
+   context that does not exist on headless CI runners."
   (:require
    [clojure.tools.build.api :as b]))
 
@@ -15,10 +18,15 @@
 
 (defn uberjar [_]
   (clean nil)
+  ;; Copy all sources — core AND humbleui — into the jar unchanged.
   (b/copy-dir {:src-dirs   ["src/core" "src/humbleui" "resources"]
                :target-dir class-dir})
+  ;; AOT-compile only the headless-safe core namespaces.
+  ;; infra.window is deliberately excluded: it requires HumbleUI native libs
+  ;; (Skija/libEGL) which are unavailable on headless CI runners.
+  ;; It is included as source and compiled on first use at runtime.
   (b/compile-clj {:basis     @basis
-                  :src-dirs  ["src/core" "src/humbleui"]
+                  :src-dirs  ["src/core"]
                   :class-dir class-dir})
   (b/uber {:class-dir class-dir
            :uber-file uber-file

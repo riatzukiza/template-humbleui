@@ -136,7 +136,10 @@ jobs:
       - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
-      - run: clojure -T:build uberjar
+      - name: Install libEGL stub (headless GPU shim)
+        run: sudo apt-get install -y --no-install-recommends libegl1
+      - name: Build uberjar (core AOT only)
+        run: clojure -T:build uberjar
       - uses: actions/upload-artifact@v4
         with:
           name: uberjar

@@ -16,10 +16,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
+
       - uses: actions/cache@v4
         with:
           path: |
@@ -28,14 +30,27 @@ jobs:
             ~/.deps.clj
           key: clj-${{ hashFiles('deps.edn') }}
           restore-keys: clj-
+
       - uses: DeLaGuardo/setup-clojure@12.5
         with:
           cli: latest
-      - run: clojure -T:build uberjar
+
+      # HumbleUI's native Skija lib requires libEGL (OpenGL ES) at load time.
+      # Install a minimal stub so tools.deps can resolve the git dep without
+      # triggering a native load error during AOT compilation.
+      # infra.window is NOT AOT-compiled (see build.clj) so this is only
+      # needed if any transitive require walks into humbleui namespaces.
+      - name: Install libEGL stub (headless GPU shim)
+        run: sudo apt-get install -y --no-install-recommends libegl1
+
+      - name: Build uberjar (core AOT only)
+        run: clojure -T:build uberjar
+
       - uses: actions/upload-artifact@v4
         with:
           name: uberjar
           path: target/*-standalone.jar
+
       - if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
