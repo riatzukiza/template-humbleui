@@ -20,9 +20,12 @@
                  nubank/matcher-combinators    {:mvn/version "3.9.1"}}
    :main-opts   ["-m" "kaocha.runner"]}
 
+  ;; Lint src/core and test only.
+  ;; src/humbleui is excluded: it requires HumbleUI namespaces that kondo
+  ;; cannot resolve without the native dep on the classpath.
   :kondo
   {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2024.11.14"}}
-   :main-opts  ["-m" "clj-kondo.main" "--lint" "src" "test"]}
+   :main-opts  ["-m" "clj-kondo.main" "--lint" "src/core" "test"]}
 
   :build
   {:deps       {io.github.clojure/tools.build {:git/tag "v0.10.5" :git/sha "2a21b7a"}}
