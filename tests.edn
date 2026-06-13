@@ -1,0 +1,8 @@
+#kaocha/v1
+{:tests [{:id :unit :test-paths ["test/unit"] :ns-patterns [".*-test$"]}
+         {:id :integration :test-paths ["test/integration"] :ns-patterns [".*-test$"]}
+         {:id :e2e :test-paths ["test/e2e"] :ns-patterns [".*-test$"]}]
+ :reporter kaocha.report/documentation
+ :color? true
+ :plugins [:kaocha.plugin/junit-xml]
+ :kaocha.plugin.junit-xml/target-file "target/test-results/results.xml"}

@@ -1,0 +1,10 @@
+{:linters
+ {:missing-docstring {:level :warning}
+  :unused-value {:level :warning}
+  :shadowed-var {:level :warning}
+  :used-underscored-binding {:level :warning}
+  :warn-on-reflection {:level :warning}
+  :unsorted-required-namespaces {:level :warning}
+  :refer {:level :warning
+          :exclude [clojure.test]}}
+ :lint-as {}}
