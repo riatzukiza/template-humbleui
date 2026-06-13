@@ -1,11 +1,14 @@
 (ns template-humbleui.infra.app-state
-  "Effectful app-state helpers."
-  (:require [template-humbleui.domain.counter :as counter]))
+  "Effectful state transitions."
+  (:require
+   [template-humbleui.domain.counter :as counter]))
 
 (defn increment!
-  [*state]
-  (swap! *state counter/increment))
+  "Increment count in the given state atom."
+  [*s]
+  (swap! *s counter/increment))
 
 (defn reset!
-  [*state]
-  (swap! *state counter/reset-counter))
+  "Reset count in the given state atom to zero."
+  [*s]
+  (swap! *s counter/reset-counter))

@@ -1,8 +1,8 @@
 (ns template-humbleui.main
   (:gen-class)
   (:require
-   [template-humbleui.ui.root :as root]))
+   [template-humbleui.infra.window :as win]))
 
 (defn -main
   [& _args]
-  (root/start!))
+  (win/start!))
