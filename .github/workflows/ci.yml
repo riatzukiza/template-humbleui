@@ -1,5 +1,8 @@
 name: CI
 
+# Orchestrator: lint gates all; tests run in parallel after lint;
+# build runs after all tests pass.
+
 on:
   push:
     branches: [main]
@@ -8,10 +11,165 @@ on:
 
 jobs:
   lint:
-    uses: ./.github/workflows/lint.yml
-  test:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.deps.clj
+          key: clj-${{ hashFiles('deps.edn') }}
+          restore-keys: clj-
+
+      - uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli: latest
+
+      - run: clojure -M:kondo
+
+  test-unit:
+    name: Unit Tests
     needs: lint
-    uses: ./.github/workflows/test.yml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.deps.clj
+          key: clj-${{ hashFiles('deps.edn') }}
+          restore-keys: clj-
+
+      - uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli: latest
+
+      - run: clojure -M:test unit
+
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-results
+          path: target/test-results/
+
+  test-integration:
+    name: Integration Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.deps.clj
+          key: clj-${{ hashFiles('deps.edn') }}
+          restore-keys: clj-
+
+      - uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli: latest
+
+      - run: clojure -M:test integration
+
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-results
+          path: target/test-results/
+
+  test-e2e:
+    name: E2E Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.deps.clj
+          key: clj-${{ hashFiles('deps.edn') }}
+          restore-keys: clj-
+
+      - uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli: latest
+
+      - run: clojure -M:test e2e
+
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: target/test-results/
+
   build:
-    needs: test
-    uses: ./.github/workflows/build.yml
+    name: Build Uberjar
+    needs: [test-unit, test-integration, test-e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+            ~/.deps.clj
+          key: clj-${{ hashFiles('deps.edn') }}
+          restore-keys: clj-
+
+      - uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli: latest
+
+      - run: clojure -T:build uberjar
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: uberjar
+          path: target/*-standalone.jar
+
+      - if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/*-standalone.jar
