@@ -3,7 +3,8 @@
    [clojure.test :refer [deftest is testing]]
    [template-humbleui.domain.counter :as sut]))
 
-(def valid-state {:count 0})
+(def ^{:doc "Minimal valid CounterState for use across tests."}
+  valid-state {:count 0})
 
 (deftest increment-test
   (testing "increments count by 1"

@@ -6,7 +6,8 @@
    [clojure.test :refer [deftest is testing]]
    [template-humbleui.ui.root :as sut]))
 
-(def base-state {:title "Test" :count 0})
+(def ^{:doc "Minimal valid AppState for use across tests."}
+  base-state {:title "Test" :count 0})
 
 (deftest root-view-type-test
   (testing "returns a :column node"

@@ -11,11 +11,12 @@
 
 (defn root-view
   "Return a plain Clojure map describing the UI. Pure function."
-  [{:keys [title count] :as state}]
+  [{:keys [title] :as state}]
   {:pre [(m/validate schema/AppState state)]}
-  {:type     :column
-   :padding  24
-   :spacing  12
-   :children [{:type :label  :text title}
-              {:type :label  :text (str "Count: " count)}
-              {:type :button :text "Increment"}]})
+  (let [n (:count state)]
+    {:type     :column
+     :padding  24
+     :spacing  12
+     :children [{:type :label  :text title}
+                {:type :label  :text (str "Count: " n)}
+                {:type :button :text "Increment"}]}))

@@ -1,11 +1,14 @@
 (ns template-humbleui.app-e2e-test
   "E2E: drive state atom through infra.app-state. No HumbleUI. Headless safe."
   (:require
+   [clojure.string :as str]
    [clojure.test :refer [deftest is testing use-fixtures]]
    [template-humbleui.infra.app-state :as app-state]
    [template-humbleui.ui.root :as root]))
 
-(defn reset-state-fixture [f]
+(defn- reset-state-fixture
+  "Reset *state to a known baseline before and after each test."
+  [f]
   (reset! root/*state {:title "HumbleUI Template" :count 0})
   (f)
   (reset! root/*state {:title "HumbleUI Template" :count 0}))
@@ -37,5 +40,5 @@
     (app-state/increment! root/*state)
     (let [children (:children (root/root-view @root/*state))]
       (is (some #(and (= :label (:type %))
-                      (clojure.string/includes? (:text %) "1"))
+                      (str/includes? (:text %) "1"))
                 children)))))

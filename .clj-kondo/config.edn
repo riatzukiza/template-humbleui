@@ -1,10 +1,15 @@
 {:linters
- {:missing-docstring {:level :warning}
-  :unused-value {:level :warning}
-  :shadowed-var {:level :warning}
+ {:missing-docstring        {:level   :warning
+                             ;; deftest bodies are self-documenting via testing
+                             ;; strings. Requiring docstrings on test vars adds
+                             ;; noise without epistemic value.
+                             :exclude [deftest
+                                       clojure.test/deftest]}
+  :unused-value             {:level :warning}
+  :shadowed-var             {:level :warning}
   :used-underscored-binding {:level :warning}
-  :warn-on-reflection {:level :warning}
+  :warn-on-reflection       {:level :warning}
   :unsorted-required-namespaces {:level :warning}
-  :refer {:level :warning
-          :exclude [clojure.test]}}
+  :refer                    {:level   :warning
+                              :exclude [clojure.test]}}
  :lint-as {}}
