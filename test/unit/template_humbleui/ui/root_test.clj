@@ -1,6 +1,8 @@
 (ns template-humbleui.ui.root-test
-  "Unit tests for root-view pure description. No HumbleUI required."
+  "Unit tests for root-view pure description function.
+   Does NOT load HumbleUI — safe headless."
   (:require
+   [clojure.string :as str]
    [clojure.test :refer [deftest is testing]]
    [template-humbleui.ui.root :as sut]))
 
@@ -21,7 +23,7 @@
   (testing "count is visible in a label's text"
     (let [children (:children (sut/root-view {:title "T" :count 42}))]
       (is (some #(and (= :label (:type %))
-                      (clojure.string/includes? (:text %) "42"))
+                      (str/includes? (:text %) "42"))
                 children)))))
 
 (deftest root-view-contract-test

@@ -5,6 +5,7 @@
   (:require
    [io.github.humbleui.window :as window]
    [io.github.humbleui.ui :as ui]
+   [template-humbleui.infra.app-state :as app-state]
    [template-humbleui.ui.root :as root]))
 
 (defn- ->hui
@@ -13,7 +14,7 @@
   (case type
     :column  (apply ui/column (map ->hui children))
     :label   (ui/label text)
-    :button  (ui/button #(swap! root/*state update :count inc)
+    :button  (ui/button #(app-state/increment! root/*state)
                         (ui/label text))
     (ui/label (str "unknown node: " type))))
 
